@@ -44,6 +44,7 @@ object TriangleOperations {
     val file = new File(filename)
     val br = new BufferedReader(new FileReader(file))
 
+    @tailrec
     def inner(readLines: List[List[Int]] = List.empty): List[List[Int]] =
       (for {
         line <- Try(br.readLine()).toOption

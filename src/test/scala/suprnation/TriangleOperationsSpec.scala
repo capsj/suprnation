@@ -21,4 +21,11 @@ class TriangleOperationsSpec extends AnyFlatSpec with Matchers {
 
     TriangleOperations.minPath(triangle) shouldEqual Some(expectedPath)
   }
+
+  it should "be able to compute the minimal path for a 500-row triangle" in {
+    val largeTriangle =
+      TriangleOperations.readFile("resources/500_triangle.txt")
+
+    TriangleOperations.minPath(largeTriangle) shouldBe a[Some[Path]]
+  }
 }
