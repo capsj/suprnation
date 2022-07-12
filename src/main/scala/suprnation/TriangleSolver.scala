@@ -10,7 +10,6 @@ trait Solver[I, O] {
 }
 
 class TriangleSolverF[I](val reader: Reader[I, Triangle]) extends Solver[I, Path] {
-
   def possiblePaths(input: Triangle): Either[TriangleAppError, List[Path]] = {
     @tailrec
     def inner(
@@ -52,5 +51,4 @@ class TriangleSolverF[I](val reader: Reader[I, Triangle]) extends Solver[I, Path
       triangle <- reader.readLines(input)
       paths <- possiblePaths(triangle)
     } yield paths.maxBy(_.sum)
-
 }

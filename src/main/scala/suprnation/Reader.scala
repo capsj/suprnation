@@ -11,8 +11,8 @@ trait Reader[S, O] {
   def readLines(source: S): Either[InputError, O]
 }
 
+/** Read triangle lines from a StdIn */
 object StdInReader extends Reader[Unit, Triangle] {
-
   def readLines(u: Unit = ()): Either[InputError, Triangle] = {
     @tailrec
     def inner(previousLines: Triangle): Either[InputError, Triangle] = {
@@ -40,8 +40,9 @@ object StdInReader extends Reader[Unit, Triangle] {
   }
 }
 
+/** Read triangle lines from a file */
 object FileReader extends Reader[String, Triangle] {
-  override def readLines(source: String): Either[InputError, Triangle] = {
+  def readLines(source: String): Either[InputError, Triangle] = {
     val readerE: Either[InputError, BufferedReader] =
       Try({
         val file = new File(source)
@@ -64,9 +65,9 @@ object FileReader extends Reader[String, Triangle] {
           Parser.stringToEitherIntList(line) match {
             case Left(_) if readLines.nonEmpty => Right(readLines)
             case Right(row) => inner(readLines :+ row)
-            case left => Left(ParsingError)
+            case _ => Left(ParsingError)
           }
-        case left => Left(BadSource)
+        case _ => Left(BadSource)
       }
 
     inner()

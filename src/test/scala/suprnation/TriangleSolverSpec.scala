@@ -5,11 +5,11 @@ import org.scalatest.matchers.should.Matchers
 
 class TriangleSolverSpec extends AnyFlatSpec with Matchers {
   val triangle: Triangle =
-      List(7) ::
-        List(6, 3) ::
-        List(3, 8, 5) ::
-        List(10, 2, 11, 9) ::
-        Nil
+    List(7) ::
+      List(6, 3) ::
+      List(3, 8, 5) ::
+      List(10, 2, 11, 9) ::
+      Nil
 
   behavior of "TriangleSolver"
 

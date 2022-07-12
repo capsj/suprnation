@@ -6,7 +6,7 @@ import scala.util.Try
 
 object Parser {
 
-  def stringToEitherIntList: String => Either[InputError, List[Int]] = {
+  def stringToEitherIntList: String => Either[InputError, List[Int]] =
     raw =>
       Try(
         raw.split(" ")
@@ -15,5 +15,4 @@ object Parser {
         case Success(row) => Right(row)
         case Failure(_) => Left(ParsingError)
       }
-  }
 }
