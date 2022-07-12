@@ -13,7 +13,7 @@ object TriangleApp extends App {
 
 
   println(
-    new TriangleSolverP[Unit, String, Triangle](
+    new TriangleSolver[Unit, String](
       new StdInReaderP,
       TriangleRowParser
     ).minPath(()).fold(
