@@ -22,28 +22,12 @@ class ReaderSpec extends AnyFlatSpec with Matchers {
         .mkString("\n")
     val in: ByteArrayInputStream =
       new ByteArrayInputStream(stringInput.getBytes)
+    val readerP: ReaderP[Unit, String] =
+      new StdInReaderP
 
     Console.withIn(in) {
-      StdInReader.readLines() shouldBe Right(triangle)
-    }
-  }
-
-  it should "reject invalid triangles" in {
-    val invalidTriangle: Triangle =
-      List(7) ::
-        List(6, 3) ::
-        List(3, 8, 5) ::
-        List(2, 11, 9) ::
-        Nil
-    val stringInput: String =
-      invalidTriangle
-        .map(_.mkString(" "))
-        .mkString("\n")
-    val in: ByteArrayInputStream =
-      new ByteArrayInputStream(stringInput.getBytes)
-
-    Console.withIn(in) {
-      StdInReader.readLines() shouldBe Left(TriangleFormatError)
+      triangle.foreach(r =>
+        readerP.readLine(()) shouldBe Right(r.mkString(" ")))
     }
   }
 

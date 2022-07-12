@@ -1,7 +1,8 @@
 package object suprnation {
 
   type Node = Int
-  type Triangle = List[List[Node]]
+  type Row = List[Node]
+  type Triangle = List[Row]
 
   case class Path(sum: Int, nodes: Seq[Node]) {
     def addNode(value: Int): Path =
@@ -18,6 +19,7 @@ package object suprnation {
   sealed trait InputError extends TriangleAppError
   case object ParsingError extends InputError
   case object TriangleFormatError extends InputError
+  case object UnexpectedInputError extends InputError
   case object EmptyError extends InputError
   case object BadSource extends InputError
 

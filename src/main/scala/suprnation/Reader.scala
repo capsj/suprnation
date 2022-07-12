@@ -11,32 +11,17 @@ trait Reader[S, O] {
   def readLines(source: S): Either[InputError, O]
 }
 
-/** Read triangle lines from a StdIn */
-object StdInReader extends Reader[Unit, Triangle] {
-  def readLines(u: Unit = ()): Either[InputError, Triangle] = {
-    @tailrec
-    def inner(previousLines: Triangle): Either[InputError, Triangle] = {
-      val rowE: Either[InputError, List[Int]] =
-        StdIn.readLine() match {
-          case "" | null => Right(List.empty)
-          case other => Parser.stringToEitherIntList(other)
-        }
+trait ReaderP[S, O] {
+  def readLine(source: S): Either[InputError, O]
+}
 
-      rowE match {
-        case Right(Nil) => Right(previousLines)
-
-        case Right(row) =>
-          val lastRow = previousLines.lastOption.getOrElse(List.empty)
-          val expectedSize = lastRow.size + 1
-
-          if(row.size == expectedSize) inner(previousLines :+ row)
-          else Left(TriangleFormatError)
-
-        case Left(err) => Left(err)
-      }
-    }
-
-    inner(List.empty)
+/** Read triangle lines from StdIn */
+class StdInReaderP extends ReaderP[Unit, String] {
+  def readLine(u: Unit = ()): Either[InputError, String] = {
+    Try(StdIn.readLine())
+      .fold(
+        fa = _ => Left(UnexpectedInputError),
+        fb = Right(_))
   }
 }
 
@@ -62,7 +47,7 @@ object FileReader extends Reader[String, Triangle] {
               fb = Right(_))
       } yield line) match {
         case Right(line) =>
-          Parser.stringToEitherIntList(line) match {
+          Parser.rawStringToRow(line) match {
             case Left(_) if readLines.nonEmpty => Right(readLines)
             case Right(row) => inner(readLines :+ row)
             case _ => Left(ParsingError)

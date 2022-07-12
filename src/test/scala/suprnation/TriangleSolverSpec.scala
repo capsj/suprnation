@@ -23,10 +23,10 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
       override def readLines(source: Unit): Either[InputError, Triangle] = Right(triangle)
     }
 
-    new TriangleSolverF[Unit](mockReader).minPath() shouldEqual Right(expectedPath)
+    new TriangleSolver[Unit](mockReader).minPath(()) shouldEqual Right(expectedPath)
   }
 
   it should "be able to produce the minimal path for a 500-row triangle" in {
-    new TriangleSolverF[String](FileReader).minPath("resources/500_triangle.txt") shouldBe a[Right[_, _]]
+    new TriangleSolver[String](FileReader).minPath("resources/500_triangle.txt") shouldBe a[Right[_, _]]
   }
 }
