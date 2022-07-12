@@ -1,4 +1,6 @@
-# Suprnation
+# Suprnation Coding Exercise
+
+This program will find minimum/maximum paths for triangles and print them out to standard output. 
 
 ## How to run
 
@@ -32,3 +34,9 @@ In order to run the tests:
 ```
 sbt test
 ```
+
+## Notes
+
+I had initially solved it by traversing the entire input once it was fully known.
+After reading from the file I had the idea to stream the lines and compute the `Path`s as new lines were processed. 
+I got to implement the solution processing one line at a time, but did not get around to use any streaming tools.
