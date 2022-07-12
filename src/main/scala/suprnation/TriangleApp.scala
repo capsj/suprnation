@@ -6,14 +6,12 @@ import java.io.File
 import scala.util.Try
 
 object TriangleApp extends App {
-
   val solver: TriangleSolver[Unit, String] =
     new TriangleSolver[Unit, String](StdInReader, TriangleRowParser)
-  val minPath = solver.minPath(())
 
   println("Please input the desired triangle: ")
   println(
-    minPath.fold(
+    solver.minPath(()).fold(
       fa = err => s"No minimal path could be found due to $err",
       fb = p => s"Minimal path is: ${p.prettyString}"))
 }
