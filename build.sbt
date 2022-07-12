@@ -6,6 +6,7 @@ ThisBuild / organization     := "com.suprnation"
 ThisBuild / organizationName := "suprnation"
 
 assembly / assemblyJarName := "MinTrianglePath.jar"
+assembly / mainClass := Some("suprnation.TriangleApp")
 
 lazy val root = (project in file("."))
   .settings(

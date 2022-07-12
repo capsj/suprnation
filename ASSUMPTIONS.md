@@ -1,0 +1,16 @@
+# Assumptions
+
+## Input 
+
+- Triangles will be composed of nodes with only `Int` values to simplify the problem.
+
+## Resources
+
+- The amount of memory allocated to the process will be enough to store the list of `Path`s. 
+This list will grow as much as: 
+  - N=2^(H−1) `Path`s, where H is the triangle's height.
+  - Each `Path` will in turn include every `Int` node within the path (H elements)
+
+
+
+
