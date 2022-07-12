@@ -1,5 +1,9 @@
 package suprnation
 
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
+
 import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.util.Try
@@ -8,16 +12,17 @@ object TriangleOperations {
 
   @tailrec
   /** Read lines from StdIn and parse them as rows of Int of increasing size */
-  def readLines(previousLines: List[List[Int]]): Triangle = {
+  def readLines(previousLines: List[List[Int]] = List.empty): Triangle = {
     val rowOpt: Option[List[Int]] =
       StdIn.readLine() match {
         case null => None
         case "" => None
         case other =>
-          Option(
+          Try(
             other.split(" ")
               .map(_.toInt)
               .toList)
+            .toOption
       }
 
     rowOpt match {
@@ -32,6 +37,23 @@ object TriangleOperations {
 
       case None => previousLines
     }
+  }
+
+  /** Read lines from a file and parse them as rows of Int */
+  def readFile(filename: String): List[List[Int]] = {
+    val file = new File(filename)
+    val br = new BufferedReader(new FileReader(file))
+
+    def inner(readLines: List[List[Int]] = List.empty): List[List[Int]] =
+      (for {
+        line <- Try(br.readLine()).toOption
+        row <- Try(line.split(" ").map(_.toInt).toList).toOption
+      } yield readLines :+ row) match {
+        case Some(lines) => inner(lines)
+        case None => readLines
+      }
+
+    inner()
   }
 
   @tailrec

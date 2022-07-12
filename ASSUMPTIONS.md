@@ -3,6 +3,7 @@
 ## Input 
 
 - Triangles will be composed of nodes with only `Int` values to simplify the problem.
+- Triangles will contain only one minimum path as stated in the exercise.
 
 ## Resources
 
