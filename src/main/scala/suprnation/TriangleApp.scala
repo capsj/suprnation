@@ -3,9 +3,8 @@ package suprnation
 object TriangleApp extends App {
   import TriangleOperations._
 
-//  println("Please input the desired triangle: ")
+  println("Please input the desired triangle: ")
   val triangle = readLines()
-//  val triangle = readFile("resources/500_triangle.txt")
   val paths = computePaths(triangle)
 
   println(

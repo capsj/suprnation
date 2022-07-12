@@ -28,4 +28,8 @@ class TriangleOperationsSpec extends AnyFlatSpec with Matchers {
 
     TriangleOperations.minPath(largeTriangle) shouldBe a[Some[Path]]
   }
+
+  it should "result in an empty list if the specified file can't be found" in {
+    TriangleOperations.readFile("bad-filename.txt") shouldBe empty
+  }
 }

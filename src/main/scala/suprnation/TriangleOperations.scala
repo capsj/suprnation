@@ -6,6 +6,7 @@ import java.io.FileReader
 
 import scala.annotation.tailrec
 import scala.io.StdIn
+import scala.util.Success
 import scala.util.Try
 
 object TriangleOperations {
@@ -41,17 +42,21 @@ object TriangleOperations {
 
   /** Read lines from a file and parse them as rows of Int */
   def readFile(filename: String): List[List[Int]] = {
-    val file = new File(filename)
-    val br = new BufferedReader(new FileReader(file))
+    val brTry =
+      Try {
+        val file = new File(filename)
+        new BufferedReader(new FileReader(file))
+      }
 
     @tailrec
     def inner(readLines: List[List[Int]] = List.empty): List[List[Int]] =
       (for {
-        line <- Try(br.readLine()).toOption
-        row <- Try(line.split(" ").map(_.toInt).toList).toOption
+        br <- brTry
+        line <- Try(br.readLine())
+        row <- Try(line.split(" ").map(_.toInt).toList)
       } yield readLines :+ row) match {
-        case Some(lines) => inner(lines)
-        case None => readLines
+        case Success(lines) => inner(lines)
+        case _ => readLines
       }
 
     inner()
