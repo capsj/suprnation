@@ -13,9 +13,14 @@ package object suprnation {
       s"${nodes.mkString(" + ")} = $sum"
   }
 
-  sealed trait InputError
+  sealed trait TriangleAppError
+
+  sealed trait InputError extends TriangleAppError
   case object ParsingError extends InputError
   case object TriangleFormatError extends InputError
   case object EmptyError extends InputError
   case object BadSource extends InputError
+
+  sealed trait SolutionError extends TriangleAppError
+  case object EmptyInput extends SolutionError
 }

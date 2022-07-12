@@ -13,21 +13,21 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
 
   behavior of "TriangleSolver"
 
-  it should "correctly compute a minimal path" in {
+  it should "correctly produce a minimal path" in {
     val expectedPath: Path =
       Path(
         sum = 18,
         nodes = 7 :: 6 :: 3 :: 2 :: Nil)
 
-    TriangleSolver.minPath(triangle) shouldEqual Some(expectedPath)
+    TriangleSolver.minPath(triangle) shouldEqual Right(expectedPath)
   }
 
-  it should "be able to compute the minimal path for a 500-row triangle" in {
-
-    val result: Either[InputError, Option[Path]] =
+  it should "be able to produce the minimal path for a 500-row triangle" in {
+    val result: Either[TriangleAppError, Path] =
       for {
         largeTriangle <- FileReader.readLines("resources/500_triangle.txt")
-      } yield TriangleSolver.minPath(largeTriangle)
+        path <- TriangleSolver.minPath(largeTriangle)
+      } yield path
 
     result shouldBe a[Right[_, _]]
   }

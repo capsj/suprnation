@@ -7,36 +7,40 @@ import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.util.Try
 
-trait Reader[F[_, _], S, O] {
-  def readLines(source: S): F[InputError, O]
+trait Reader[S, O] {
+  def readLines(source: S): Either[InputError, O]
 }
 
-object StdInReader extends Reader[Either, Triangle, Triangle] {
+object StdInReader extends Reader[Unit, Triangle] {
 
-  @tailrec
-  def readLines(previousLines: Triangle): Either[InputError, Triangle] = {
-    val rowE: Either[InputError, List[Int]] =
-      StdIn.readLine() match {
-        case "" | null => Right(List.empty)
-        case other => Parser.stringToEitherIntList(other)
+  def readLines(u: Unit = ()): Either[InputError, Triangle] = {
+    @tailrec
+    def inner(previousLines: Triangle): Either[InputError, Triangle] = {
+      val rowE: Either[InputError, List[Int]] =
+        StdIn.readLine() match {
+          case "" | null => Right(List.empty)
+          case other => Parser.stringToEitherIntList(other)
+        }
+
+      rowE match {
+        case Right(Nil) => Right(previousLines)
+
+        case Right(row) =>
+          val lastRow = previousLines.lastOption.getOrElse(List.empty)
+          val expectedSize = lastRow.size + 1
+
+          if(row.size == expectedSize) inner(previousLines :+ row)
+          else Left(TriangleFormatError)
+
+        case Left(err) => Left(err)
       }
-
-    rowE match {
-      case Right(Nil) => Right(previousLines)
-
-      case Right(row) =>
-        val lastRow = previousLines.lastOption.getOrElse(List.empty)
-        val expectedSize = lastRow.size + 1
-
-        if(row.size == expectedSize) readLines(previousLines :+ row)
-        else Left(TriangleFormatError)
-
-      case Left(err) => Left(err)
     }
+
+    inner(List.empty)
   }
 }
 
-object FileReader extends Reader[Either, String, Triangle] {
+object FileReader extends Reader[String, Triangle] {
   override def readLines(source: String): Either[InputError, Triangle] = {
     val readerE: Either[InputError, BufferedReader] =
       Try({

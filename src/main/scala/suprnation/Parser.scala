@@ -6,14 +6,6 @@ import scala.util.Try
 
 object Parser {
 
-  def stringToIntList: String => Try[List[Int]] = {
-    raw =>
-      Try(
-        raw.split(" ")
-          .map(_.toInt)
-          .toList)
-  }
-
   def stringToEitherIntList: String => Either[InputError, List[Int]] = {
     raw =>
       Try(

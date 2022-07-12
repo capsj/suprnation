@@ -1,38 +1,47 @@
 package suprnation
 
 import scala.annotation.tailrec
-import scala.util.Try
 
-object TriangleSolver {
+trait Solver[I, O] {
+  def minPath: I => Either[SolutionError, O]
+  def maxPath: I => Either[SolutionError, O]
+}
 
-  @tailrec
-  def computePaths(
-    triangle: Triangle,
-    accPaths: List[Path] = List.empty
-  ): List[Path] = {
-    triangle match {
-      case Nil => accPaths
+object TriangleSolver extends Solver[Triangle, Path] {
 
-      case (root :: Nil) :: tail =>
-        computePaths(tail, List(Path(root, List(root))))
+  def possiblePaths(input: Triangle): Either[SolutionError, List[Path]] = {
+    @tailrec
+    def inner(
+      triangle: Triangle,
+      accPaths: List[Path] = List.empty
+    ): Either[SolutionError, List[Path]] = {
+      triangle match {
+        case Nil if accPaths.nonEmpty => Right(accPaths)
+        case Nil => Left(EmptyInput)
 
-      case elem :: tail =>
-        val tuples: List[(Node, Node)] = elem.zip(elem.tail)
-        val combinations: List[((Node, Node), Path)] = tuples.zip(accPaths)
-        val computedPaths: List[Path] =
+        case (root :: Nil) :: tail =>
+          inner(tail, List(Path(root, List(root))))
+
+        case elem :: tail =>
+          val tuples: List[(Node, Node)] = elem.zip(elem.tail)
+          val combinations: List[((Node, Node), Path)] = tuples.zip(accPaths)
+          val computedPaths: List[Path] =
           combinations.flatMap({
-            case ((left, right), path) =>
-              path.addNode(left) ::
-                path.addNode(right) ::
-                Nil
+          case ((left, right), path) =>
+          path.addNode(left) ::
+            path.addNode(right) ::
+            Nil
           })
-        computePaths(tail, computedPaths)
+          inner(tail, computedPaths)
+        }
     }
+
+    inner(input)
   }
 
-  val minPath: Triangle => Option[Path] =
-    triangle => Try(computePaths(triangle).minBy(_.sum)).toOption
+  def minPath: Triangle => Either[SolutionError, Path] =
+    triangle => possiblePaths(triangle).map(_.minBy(_.sum))
 
-  val maxPath: Triangle => Option[Path] =
-    triangle => Try(computePaths(triangle).maxBy(_.sum)).toOption
+  def maxPath: Triangle => Either[SolutionError, Path] =
+    triangle => possiblePaths(triangle).map(_.maxBy(_.sum))
 }
