@@ -1,14 +1,15 @@
 package object suprnation {
 
-  type Triangle = List[List[Int]]
+  type Node = Int
+  type Triangle = List[List[Node]]
 
-  case class Path(sum: Int, values: Seq[Int]) {
-    def addStep(value: Int): Path =
+  case class Path(sum: Int, nodes: Seq[Node]) {
+    def addNode(value: Int): Path =
       copy(
         sum = sum + value,
-        values = values :+ value)
+        nodes = nodes :+ value)
 
     def prettyString: String =
-      s"${values.mkString(" + ")} = $sum"
+      s"${nodes.mkString(" + ")} = $sum"
   }
 }

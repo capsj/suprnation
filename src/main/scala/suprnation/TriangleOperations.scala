@@ -2,8 +2,9 @@ package suprnation
 
 import scala.annotation.tailrec
 import scala.io.StdIn
+import scala.util.Try
 
-object MinTrianglePath extends App {
+object TriangleOperations {
 
   @tailrec
   /** Read lines from StdIn and parse them as rows of Int of increasing size */
@@ -45,26 +46,42 @@ object MinTrianglePath extends App {
         computePaths(tail, List(Path(root, List(root))))
 
       case elem :: tail =>
-        val tuples: List[(Int, Int)] = elem.zip(elem.tail)
-        val combinations: List[((Int, Int), Path)] = tuples.zip(accPaths)
+        val tuples: List[(Node, Node)] = elem.zip(elem.tail)
+        val combinations: List[((Node, Node), Path)] = tuples.zip(accPaths)
         val computedPaths: List[Path] =
           combinations.flatMap({
             case ((left, right), path) =>
-              path.addStep(left) ::
-                path.addStep(right) ::
+              path.addNode(left) ::
+                path.addNode(right) ::
                 Nil
           })
         computePaths(tail, computedPaths)
     }
   }
 
+  val minPath: Triangle => Option[Path] =
+    triangle => Try(computePaths(triangle).minBy(_.sum)).toOption
+
+  val maxPath: Triangle => Option[Path] =
+    triangle => Try(computePaths(triangle).maxBy(_.sum)).toOption
+}
+
+object TriangleApp extends App {
+  import TriangleOperations._
+
   println("Please input the desired triangle: ")
   val triangle = readLines(List.empty)
-  println(triangle)
   val paths = computePaths(triangle)
-  println(paths)
-  val minPath = paths.minBy(_.sum)
-  println(s"Minimal path is: ${minPath.prettyString}")
-  val maxPath = paths.maxBy(_.sum)
-  println(s"Maximal path is: ${maxPath.prettyString}")
+
+  println(
+    minPath(triangle)
+      .fold(
+        ifEmpty = s"No minimal path could be found for $triangle")(
+        f = p => s"Minimal path is: ${p.prettyString}"))
+
+  println(
+    maxPath(triangle)
+      .fold(
+        ifEmpty = s"No minimal path could be found for $triangle")(
+        f = p => s"Maximal path is: ${p.prettyString}"))
 }
