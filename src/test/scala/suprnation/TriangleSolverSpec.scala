@@ -23,9 +23,12 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "be able to compute the minimal path for a 500-row triangle" in {
-    val largeTriangle: Triangle =
-      Reader.readFile("resources/500_triangle.txt")
 
-    TriangleSolver.minPath(largeTriangle) shouldBe a[Some[_]]
+    val result: Either[InputError, Option[Path]] =
+      for {
+        largeTriangle <- FileReader.readLines("resources/500_triangle.txt")
+      } yield TriangleSolver.minPath(largeTriangle)
+
+    result shouldBe a[Right[_, _]]
   }
 }

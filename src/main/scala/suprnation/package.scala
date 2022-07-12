@@ -17,4 +17,5 @@ package object suprnation {
   case object ParsingError extends InputError
   case object TriangleFormatError extends InputError
   case object EmptyError extends InputError
+  case object BadSource extends InputError
 }

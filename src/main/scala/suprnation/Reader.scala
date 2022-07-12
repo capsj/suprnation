@@ -2,23 +2,22 @@ package suprnation
 
 import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 
 import scala.annotation.tailrec
 import scala.io.StdIn
-import scala.util.Success
 import scala.util.Try
 
-object Reader {
+trait Reader[F[_, _], S, O] {
+  def readLines(source: S): F[InputError, O]
+}
+
+object StdInReader extends Reader[Either, Triangle, Triangle] {
 
   @tailrec
-  def readLines(
-    previousLines: List[List[Int]] = List.empty
-  ): Either[InputError, Triangle] = {
+  def readLines(previousLines: Triangle): Either[InputError, Triangle] = {
     val rowE: Either[InputError, List[Int]] =
       StdIn.readLine() match {
-        case null => Right(List.empty)
-        case "" => Right(List.empty)
+        case "" | null => Right(List.empty)
         case other => Parser.stringToEitherIntList(other)
       }
 
@@ -35,24 +34,35 @@ object Reader {
       case Left(err) => Left(err)
     }
   }
+}
 
-  /** Read lines from a file and parse them as rows of Int */
-  def readFile(filename: String): List[List[Int]] = {
-    val brTry =
-      Try {
-        val file = new File(filename)
-        new BufferedReader(new FileReader(file))
-      }
+object FileReader extends Reader[Either, String, Triangle] {
+  override def readLines(source: String): Either[InputError, Triangle] = {
+    val readerE: Either[InputError, BufferedReader] =
+      Try({
+        val file = new File(source)
+        new BufferedReader(new java.io.FileReader(file))
+      }).fold(
+        fa = _ => Left(BadSource),
+        fb = Right(_))
 
     @tailrec
-    def inner(readLines: List[List[Int]] = List.empty): List[List[Int]] =
+    def inner(readLines: List[List[Int]] = List.empty): Either[InputError, Triangle] =
       (for {
-        br <- brTry
-        line <- Try(br.readLine())
-        row <- Parser.stringToIntList(line)
-      } yield readLines :+ row) match {
-        case Success(lines) => inner(lines)
-        case _ => readLines
+        br <- readerE
+        line <-
+          Try(br.readLine())
+            .fold(
+              fa = _ => Right(""),
+              fb = Right(_))
+      } yield line) match {
+        case Right(line) =>
+          Parser.stringToEitherIntList(line) match {
+            case Left(_) if readLines.nonEmpty => Right(readLines)
+            case Right(row) => inner(readLines :+ row)
+            case left => Left(ParsingError)
+          }
+        case left => Left(BadSource)
       }
 
     inner()
