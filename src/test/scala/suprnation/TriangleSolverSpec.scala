@@ -19,16 +19,14 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
         sum = 18,
         nodes = 7 :: 6 :: 3 :: 2 :: Nil)
 
-    TriangleSolver.minPath(triangle) shouldEqual Right(expectedPath)
+    val mockReader = new Reader[Unit, Triangle] {
+      override def readLines(source: Unit): Either[InputError, Triangle] = Right(triangle)
+    }
+
+    new TriangleSolverF[Unit](mockReader).minPath() shouldEqual Right(expectedPath)
   }
 
   it should "be able to produce the minimal path for a 500-row triangle" in {
-    val result: Either[TriangleAppError, Path] =
-      for {
-        largeTriangle <- FileReader.readLines("resources/500_triangle.txt")
-        path <- TriangleSolver.minPath(largeTriangle)
-      } yield path
-
-    result shouldBe a[Right[_, _]]
+    new TriangleSolverF[String](FileReader).minPath("resources/500_triangle.txt") shouldBe a[Right[_, _]]
   }
 }
