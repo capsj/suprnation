@@ -3,7 +3,7 @@ package suprnation
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class TriangleOperationsSpec extends AnyFlatSpec with Matchers {
+class TriangleSolverSpec extends AnyFlatSpec with Matchers {
   val triangle: Triangle =
       List(7) ::
         List(6, 3) ::
@@ -11,7 +11,7 @@ class TriangleOperationsSpec extends AnyFlatSpec with Matchers {
         List(10, 2, 11, 9) ::
         Nil
 
-  behavior of "TriangleOperations"
+  behavior of "TriangleSolver"
 
   it should "correctly compute a minimal path" in {
     val expectedPath: Path =
@@ -19,17 +19,13 @@ class TriangleOperationsSpec extends AnyFlatSpec with Matchers {
         sum = 18,
         nodes = 7 :: 6 :: 3 :: 2 :: Nil)
 
-    TriangleOperations.minPath(triangle) shouldEqual Some(expectedPath)
+    TriangleSolver.minPath(triangle) shouldEqual Some(expectedPath)
   }
 
   it should "be able to compute the minimal path for a 500-row triangle" in {
-    val largeTriangle =
-      TriangleOperations.readFile("resources/500_triangle.txt")
+    val largeTriangle: Triangle =
+      Reader.readFile("resources/500_triangle.txt")
 
-    TriangleOperations.minPath(largeTriangle) shouldBe a[Some[Path]]
-  }
-
-  it should "result in an empty list if the specified file can't be found" in {
-    TriangleOperations.readFile("bad-filename.txt") shouldBe empty
+    TriangleSolver.minPath(largeTriangle) shouldBe a[Some[_]]
   }
 }

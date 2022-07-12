@@ -1,21 +1,16 @@
 package suprnation
 
 object TriangleApp extends App {
-  import TriangleOperations._
+  import TriangleSolver._
 
   println("Please input the desired triangle: ")
-  val triangle = readLines()
-  val paths = computePaths(triangle)
-
-  println(
-    minPath(triangle)
+  val result: String =
+    (for {
+      triangle <- Reader.readLines()
+      minPath <- minPath(triangle).toRight(EmptyError)
+    } yield minPath)
       .fold(
-        ifEmpty = s"No minimal path could be found for $triangle")(
-        f = p => s"Minimal path is: ${p.prettyString}"))
-
-  println(
-    maxPath(triangle)
-      .fold(
-        ifEmpty = s"No minimal path could be found for $triangle")(
-        f = p => s"Maximal path is: ${p.prettyString}"))
+        fa = err => s"No minimal path could be found due to $err",
+        fb = p => s"Minimal path is: ${p.prettyString}")
+  println(result)
 }

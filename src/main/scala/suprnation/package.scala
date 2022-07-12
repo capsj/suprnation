@@ -12,4 +12,9 @@ package object suprnation {
     def prettyString: String =
       s"${nodes.mkString(" + ")} = $sum"
   }
+
+  sealed trait InputError
+  case object ParsingError extends InputError
+  case object TriangleFormatError extends InputError
+  case object EmptyError extends InputError
 }
