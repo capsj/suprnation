@@ -1,7 +1,14 @@
 package suprnation
 
+import java.io.BufferedReader
+import java.io.File
+
+import scala.util.Try
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import suprnation.TriangleFromFile.fileSolver
+import suprnation.TriangleFromFile.readerE
 
 class TriangleSolverSpec extends AnyFlatSpec with Matchers {
   val triangle: Triangle =
@@ -19,8 +26,8 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
         sum = 18,
         nodes = 7 :: 6 :: 3 :: 2 :: Nil)
 
-    val mockReaderP: ReaderP[Unit, String] =
-      new ReaderP[Unit, String] {
+    val mockReaderP: Reader[Unit, String] =
+      new Reader[Unit, String] {
         var elements = triangle
 
         def readLine(u: Unit): Either[InputError, String] = {
@@ -39,7 +46,11 @@ class TriangleSolverSpec extends AnyFlatSpec with Matchers {
     new TriangleSolver(mockReaderP, mockParser).minPath(()) shouldEqual Right(expectedPath)
   }
 
-//  it should "be able to produce the minimal path for a 500-row triangle" in {
-//    new TriangleSolver[String](FileReader).minPath("resources/500_triangle.txt") shouldBe a[Right[_, _]]
-//  }
+  it should "be able to produce the minimal path for a 500-row triangle" in {
+    val file = new File("resources/500_triangle.txt")
+    val br = new BufferedReader(new java.io.FileReader(file))
+
+    new TriangleSolver[BufferedReader, String](FileReader, TriangleRowParser)
+      .minPath(br) shouldBe a[Right[_, _]]
+  }
 }

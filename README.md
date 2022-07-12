@@ -18,6 +18,12 @@ java -jar MinTrianglePath.jar
 sbt "runMain suprnation.TriangleApp"
 ```
 
+4. If you wish to generate your own version of the jar you can do so by running:
+```
+sbt "assembly"
+java -jar target/scala-2.13/MinTrianglePath.jar
+```
+
 Just enter a blank line whenever you wish to stop providing input. 
 
 ## Tests

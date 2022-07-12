@@ -3,7 +3,7 @@ package suprnation
 import scala.annotation.tailrec
 
 trait Solver[I, M] {
-  val reader: ReaderP[I, M]
+  val reader: Reader[I, M]
   val parser: Parser[M, Row]
 
   def minPath: I => Either[TriangleAppError, Path]
@@ -11,7 +11,7 @@ trait Solver[I, M] {
 }
 
 class TriangleSolver[I, M](
-  val reader: ReaderP[I, M],
+  val reader: Reader[I, M],
   val parser: Parser[M, Row]
 ) extends Solver[I, M] {
   def paths(input: I): Either[TriangleAppError, List[Path]] = {
